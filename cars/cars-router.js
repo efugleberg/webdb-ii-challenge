@@ -5,6 +5,7 @@ const db = require("../data/db-config.js");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  
   try {
     const cars = await db("cars");
     res.json(cars);
@@ -14,6 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  console.log(req.params);
   try {
     const { id } = req.params;
     const car = await db("cars").where({ id });
@@ -24,6 +26,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  console.log(req.body);
   try {
     const carData = req.body;
     const [id] = await db("cars").insert(carData);
@@ -33,5 +36,15 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "Failed to store data" });
   }
 });
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await db('cars').where({ id }).del();
+    res.json(car);
+  } catch (err) {
+    res.status(500).json({ message: "failed to delete car" })
+  }
+})
 
 module.exports = router;
